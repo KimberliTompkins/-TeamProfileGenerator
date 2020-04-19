@@ -9,126 +9,127 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+const employeeObjects = [];
+
 async function promptUser() {
-
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "What is your name?",
-            name: "name"
-        },
-        {
-            type: "input",
-            message: "What is your ID number?",
-            name: "id"
-        },
-        {
-            type: "input",
-            message: "Email address?",
-            name: "email"
-        },
-        {
-            type: "checkbox",
-            message: "Role?",
-            choices: ["Manager", "Engineer", "Intern"],
-            name: "role"
-        }
+  try {
+    const answers = await inquirer.prompt([
+      {
+        type: "input",
+        message: "What is your name?",
+        name: "name",
+      },
+      {
+        type: "input",
+        message: "What is your ID number?",
+        name: "id",
+      },
+      {
+        type: "input",
+        message: "Email address?",
+        name: "email",
+      },
+      {
+        type: "checkbox",
+        message: "Role?",
+        choices: ["Manager", "Engineer", "Intern"],
+        name: "role",
+      },
     ]);
-};
-async function promptManager() {
 
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "Office Number?",
-            name: "officeNumber"
-        },
-        {
-            type: "list",
-            message: "Add more?",
-            name: "more",
-            choices: ["Y","N"],
-        }
+    if (answers.role.toString() === "Manager") {
+      await promptManager(answers);
+    } else if (answers.role.toString() === "Engineer") {
+      await promptEngineer(answers);
+    } else {
+      await promptIntern(answers);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function promptManager(answers) {
+  try {
+    const mAnswers = await inquirer.prompt([
+      {
+        type: "input",
+        message: "What is your office number?",
+        name: "officeNumber",
+      },
     ]);
-};
-async function promptEngineer() {
+    const { name, id, email, role } = answers;
+    const { officeNumber } = mAnswers;
+    const manager = new Manager(name, id, email, officeNumber);
+    employeeObjects.push(manager);
+    await promptForMore();
+  } catch (err) {
+    console.log(err);
+  }
+}
 
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "GitHub link?",
-            name: "github"
-        },
-        {
-            type: "list",
-            message: "Add more?",
-            name: "more",
-            choices: ["Y","N"],
-        }
+async function promptEngineer(answers) {
+  try {
+    const eAnswers = await inquirer.prompt([
+      {
+        type: "input",
+        message: "GitHub link?",
+        name: "github",
+      },
     ]);
-};
-async function promptIntern() {
+    const { name, id, email, role } = answers;
+    const { github } = eAnswers;
+    const engineer = new Engineer(name, id, email, github);
+    employeeObjects.push(engineer);
+    await promptForMore();
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function promptIntern(answers) {
+  try {
+    const iAnswers = await inquirer.prompt([
+      {
+        type: "input",
+        message: "School?",
+        name: "school",
+      },
+    ]);
+    const { name, id, email, role } = answers;
+    const { school } = iAnswers;
+    const intern = new Intern(name, id, email, school);
+    employeeObjects.push(intern);
+    await promptForMore();
+  } catch (err) {
+    console.log(err);
+  }
+}
+async function promptForMore() {
+  try {
+    const cAnswers = await inquirer.prompt([
+      {
+        type: "checkbox",
+        message: "Add More?",
+        choices: ["Y", "N"],
+        name: "more",
+      },
+    ]);
+    console.log(cAnswers);
+    if (cAnswers.more.toString() === "Y") {
+      await promptUser();
+    } else {
+      console.log("thank you");
+    }
+  } catch (err) {
+    alert(err); // TypeError: failed to fetch
+  }
+}
 
-    return inquirer.prompt([
-        {
-            type: "input",
-            message: "School?",
-            name: "school"
-        },
-        {
-            type: "list",
-            message: "Add more?",
-            name: "more",
-            choices: ["Y","N"],
-        }
-    ]);
-};
+promptUser();
+
+
 // first get all the standard answers.  then get the additional questions based on the role.
-promptUser()
-    .then(function (answers) {
-        switch (answers.role.toString()) {
-            case "Manager":
-                promptManager()
-                    .then(function (mAnswers) {
-                        const { name, id, email, role} = answers;
-                        const {officeNumber,more} = mAnswers;
-                        const manager = new Manager(name,id,email,officeNumber);
-                        if (more === "Y")promptUser()||console.log("Thank you");
-                    })
-                    .catch(function (err) {
-                        console.log(err);
-                    });
-                break;
-            case "Engineer":
-                promptEngineer()
-                .then(function (eAnswers) {
-                    const { name, id, email, role} = answers;
-                    const {github,more} = eAnswers;
-                    const engineer = new Engineer(name,id,email,github);
-                    if (more === "Y") promptUser()||console.log("Thank you");
-                })
-                .catch(function (err) {
-                    console.log(err);
-                });
-                break;
-            default:
-                promptIntern()
-                .then(function (iAnswers) {
-                    const { name, id, email, role} = answers;
-                    const {school,more} = iAnswers;
-                    const intern = new Intern(name,id,email,school);
-                    if (more === "Y")promptUser()||console.log("Thank you");
-                })
-                .catch(function (err) {
-                    console.log(err);
-                });
-            // code block
-        }
-    })
-    .catch(function (err) {
-        console.log(err);
-    });
 
+//promptForMore();
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
