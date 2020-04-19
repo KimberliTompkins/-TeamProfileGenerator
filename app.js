@@ -93,8 +93,7 @@ promptUser()
                         const { name, id, email, role} = answers;
                         const {officeNumber,more} = mAnswers;
                         const manager = new Manager(name,id,email,officeNumber);
-                        if (more === "Y"){ promptUser()}
-                        else{console.log("Thank you")};
+                        if (more === "Y")promptUser()||console.log("Thank you");
                     })
                     .catch(function (err) {
                         console.log(err);
@@ -106,8 +105,7 @@ promptUser()
                     const { name, id, email, role} = answers;
                     const {github,more} = eAnswers;
                     const engineer = new Engineer(name,id,email,github);
-                    if (more === "Y"){ promptUser()}
-                    else{console.log("Thank you")};
+                    if (more === "Y") promptUser()||console.log("Thank you");
                 })
                 .catch(function (err) {
                     console.log(err);
