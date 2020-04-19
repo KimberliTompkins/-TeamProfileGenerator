@@ -9,10 +9,111 @@ const OUTPUT_DIR = path.resolve(__dirname, "output");
 const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
+async function promptUser() {
 
-const myIntern = new Intern("kim",3,"kim@ddd.com","arvada")
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "What is your name?",
+            name: "name"
+        },
+        {
+            type: "input",
+            message: "What is your ID number?",
+            name: "id"
+        },
+        {
+            type: "input",
+            message: "Email address?",
+            name: "email"
+        },
+        {
+            type: "checkbox",
+            message: "Job title?",
+            choices: ["Manager", "Engineer", "Intern"],
+            name: "role"
+        }
+    ]);
+};
+async function promptManager() {
 
-console.log(myIntern)
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "Office Number?",
+            name: "officeNumber"
+        },
+    ]);
+};
+async function promptEngineer() {
+
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "GitHub link?",
+            name: "github"
+        },
+    ]);
+};
+async function promptIntern() {
+
+    return inquirer.prompt([
+        {
+            type: "input",
+            message: "School?",
+            name: "school"
+        },
+    ]);
+};
+// first get all the standard answers.  then get the additional questions based on the role.
+promptUser()
+    .then(function (answers) {
+        switch (answers.role.toString()) {
+            case "Manager":
+                promptManager()
+                    .then(function (mAnswers) {
+                        const { name, id, email, role} = answers;
+                        const {officeNumber} = mAnswers;
+                        const manager = new Manager(name,id,email,officeNumber);
+                    }
+                    )
+                    .catch(function (err) {
+                        console.log(err);
+                    });
+                break;
+            case "Engineer":
+                promptEngineer()
+                .then(function (eAnswers) {
+                    const { name, id, email, role} = answers;
+                    const {github} = eAnswers;
+                    const engineer = new Engineer(name,id,email,github);
+                    
+                }
+                )
+                .catch(function (err) {
+                    console.log(err);
+                });
+                break;
+            default:
+                promptIntern()
+                .then(function (iAnswers) {
+                    const { name, id, email, role} = answers;
+                    const {school} = iAnswers;
+                    const intern = new Intern(name,id,email,school);
+                    
+                }
+                )
+                .catch(function (err) {
+                    console.log(err);
+                });
+            // code block
+        }
+    })
+    .catch(function (err) {
+        console.log(err);
+    });
+
+
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
 
