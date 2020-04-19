@@ -29,7 +29,7 @@ async function promptUser() {
         },
         {
             type: "checkbox",
-            message: "Job title?",
+            message: "Role?",
             choices: ["Manager", "Engineer", "Intern"],
             name: "role"
         }
@@ -43,6 +43,12 @@ async function promptManager() {
             message: "Office Number?",
             name: "officeNumber"
         },
+        {
+            type: "list",
+            message: "Add more?",
+            name: "more",
+            choices: ["Y","N"],
+        }
     ]);
 };
 async function promptEngineer() {
@@ -53,6 +59,12 @@ async function promptEngineer() {
             message: "GitHub link?",
             name: "github"
         },
+        {
+            type: "list",
+            message: "Add more?",
+            name: "more",
+            choices: ["Y","N"],
+        }
     ]);
 };
 async function promptIntern() {
@@ -63,6 +75,12 @@ async function promptIntern() {
             message: "School?",
             name: "school"
         },
+        {
+            type: "list",
+            message: "Add more?",
+            name: "more",
+            choices: ["Y","N"],
+        }
     ]);
 };
 // first get all the standard answers.  then get the additional questions based on the role.
@@ -73,10 +91,11 @@ promptUser()
                 promptManager()
                     .then(function (mAnswers) {
                         const { name, id, email, role} = answers;
-                        const {officeNumber} = mAnswers;
+                        const {officeNumber,more} = mAnswers;
                         const manager = new Manager(name,id,email,officeNumber);
-                    }
-                    )
+                        if (more === "Y"){ promptUser()}
+                        else{console.log("Thank you")};
+                    })
                     .catch(function (err) {
                         console.log(err);
                     });
@@ -85,11 +104,11 @@ promptUser()
                 promptEngineer()
                 .then(function (eAnswers) {
                     const { name, id, email, role} = answers;
-                    const {github} = eAnswers;
+                    const {github,more} = eAnswers;
                     const engineer = new Engineer(name,id,email,github);
-                    
-                }
-                )
+                    if (more === "Y"){ promptUser()}
+                    else{console.log("Thank you")};
+                })
                 .catch(function (err) {
                     console.log(err);
                 });
@@ -98,11 +117,10 @@ promptUser()
                 promptIntern()
                 .then(function (iAnswers) {
                     const { name, id, email, role} = answers;
-                    const {school} = iAnswers;
+                    const {school,more} = iAnswers;
                     const intern = new Intern(name,id,email,school);
-                    
-                }
-                )
+                    if (more === "Y")promptUser()||console.log("Thank you");
+                })
                 .catch(function (err) {
                     console.log(err);
                 });
