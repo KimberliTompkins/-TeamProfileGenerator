@@ -2,7 +2,7 @@
 # Title    
 ## **Team Profile Generator**
 
-https://github.com/KimberliTompkins/-TeamProfileGenerator
+https://github.com/KimberliTompkins/TeamProfileGenerator
 
 ## *Description* 
 
